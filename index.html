@@ -17,7 +17,7 @@
       <div class="glow"></div>
     </div>
 
-    <article class="card bg-zinc-800 rounded-2xl p-6 shadow-2xl w-full">
+    <article id="card" class="card bg-zinc-800 rounded-2xl p-6 shadow-2xl w-full">
       <header class="flex items-center mb-4">
         <div class="flex space-x-2">
           <span class="bg-red-500 h-3 w-3 rounded-full"></span>
@@ -28,28 +28,29 @@
 
       <main class="text-center">
         <sup><i class="ri-double-quotes-l text-2xl"></i></sup>
-        <p id="data" class="px-4 leading-relaxed fade-in">
+        <p id="quote-text" class="px-4 leading-relaxed fade-in">
           LISP has assisted a number of our most gifted fellow humans in thinking previously impossible thoughts.
         </p>
         <sub><i class="ri-double-quotes-r text-2xl"></i></sub>
       </main>
 
       <footer class="flex justify-end mt-3 font-semibold">
-        <span id="author">— Edsger W. Dijkstra</span>
+        <span id="quote-author">— Edsger W. Dijkstra</span>
       </footer>
 
       <hr class="border-zinc-700 my-4">
       <div class="flex justify-between">
         <button id="prevBtn" class="bg-red-500 px-4 py-1.5 rounded-full font-semibold hidden">Previous</button>
-        <button id="btn" class="bg-blue-500 px-4 py-1.5 rounded-full font-semibold">New Quote</button>
+        <button id="newQuoteBtn" class="bg-blue-500 px-4 py-1.5 rounded-full font-semibold">New Quote</button>
       </div>
     </article>
   </div>
 
   <script>
-    const data = document.getElementById("data");
-    const author = document.getElementById("author");
-    const btn = document.getElementById("btn");
+    const card = document.getElementById("card");
+    const data = document.getElementById("quote-text");
+    const author = document.getElementById("quote-author");
+    const btn = document.getElementById("newQuoteBtn");
     const prevBtn = document.getElementById("prevBtn");
 
     const apiEndpoints = [
@@ -67,7 +68,7 @@
     ];
 
     let history = [];
-    let currentQuote = null;
+    let currentQuote = fallbackQuotes[0];
     let currentApiIndex = 0;
 
     function getRandomFallbackQuote() {
@@ -123,7 +124,7 @@
       data.textContent = quote.text;
       author.textContent = `— ${quote.author}`;
       data.classList.remove("fade-in");
-      void data.offsetWidth;
+      void data.offsetWidth; // reflow
       data.classList.add("fade-in");
     }
 
@@ -137,9 +138,26 @@
       }
     });
 
-    // Initialize with default quote
-    currentQuote = fallbackQuotes[0];
+    // Initialize
     updateUI(currentQuote);
+
+    // Card 3D tilt effect
+    card.addEventListener("mousemove", (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const rotateX = ((y - centerY) / centerY) * 10;
+      const rotateY = ((x - centerX) / centerX) * -10;
+
+      card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
+    });
+
+    card.addEventListener("mouseleave", () => {
+      card.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
+    });
   </script>
 </body>
 </html>
