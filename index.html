@@ -47,63 +47,127 @@
   </div>
 
   <script>
-    const API_URL = "https://programming-quotes-api.azurewebsites.net/api/quotes/random";
-    const quoteText = document.getElementById("quote-text");
-    const quoteAuthor = document.getElementById("quote-author");
-    const newQuoteBtn = document.getElementById("newQuoteBtn");
-    const prevBtn = document.getElementById("prevBtn");
-    const card = document.querySelector(".card");
+ // Multiple API endpoints for reliability
+    const apiEndpoints = [
+      "https://api.quotable.io/random",
+      "https://programming-quotes-api.azurewebsites.net/api/quotes/random",
+      "https://zenquotes.io/api/random"
+    ];
 
-    let history = [];
-    let currentQuote = null;
-
-    const fetchQuote = async () => {
-      try {
-        const response = await fetch(API_URL);
-        const quote = await response.json();
-        if (currentQuote) history.push(currentQuote);
-        currentQuote = quote;
-        updateUI(quote);
-        if (history.length > 0) prevBtn.classList.remove("hidden");
-      } catch (err) {
-        console.error("Error fetching quote:", err);
+    // Fallback quotes in case all APIs fail
+    const fallbackQuotes = [
+      {
+        en: "The best way to predict the future is to invent it.",
+        author: "Alan Kay"
+      },
+      {
+        en: "Code is like humor. When you have to explain it, it's bad.",
+        author: "Cory House"
+      },
+      {
+        en: "Programming isn't about what you know; it's about what you can figure out.",
+        author: "Chris Pine"
+      },
+      {
+        en: "The only way to learn a new programming language is by writing programs in it.",
+        author: "Dennis Ritchie"
+      },
+      {
+        en: "Talk is cheap. Show me the code.",
+        author: "Linus Torvalds"
       }
-    };
+    ];
 
-    const updateUI = (quote) => {
-      quoteText.textContent = quote.en;
-      quoteAuthor.textContent = `— ${quote.author}`;
-      quoteText.classList.remove("fade-in");
-      void quoteText.offsetWidth;
-      quoteText.classList.add("fade-in");
-    };
+const data = document.getElementById("data");
+const btn = document.getElementById("btn");
+const prevBtn = document.getElementById("prevBtn");
+const author = document.getElementById("author");
 
-    newQuoteBtn.addEventListener("click", fetchQuote);
-    prevBtn.addEventListener("click", () => {
-      if (history.length > 0) {
-        const prevQuote = history.pop();
-        currentQuote = prevQuote;
-        updateUI(prevQuote);
-        if (history.length === 0) prevBtn.classList.add("hidden");
+let history = [];
+let currentQuote = null;
+let currentApiIndex = 0;
+
+async function fetchQuote() {
+  // Show loading state
+  btn.textContent = "Loading...";
+  btn.disabled = true;
+  
+  let quote = null;
+  let success = false;
+  
+  // Try each API endpoint
+  for (let i = 0; i < apiEndpoints.length && !success; i++) {
+    try {
+      console.log(`Trying API: ${apiEndpoints[currentApiIndex]}`);
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      
+      const response = await fetch(apiEndpoints[currentApiIndex], {
+        signal: controller.signal,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
       }
-    });
-
-    card.addEventListener("mousemove", (e) => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-
-      const rotateX = ((y - centerY) / centerY) * 10;
-      const rotateY = ((x - centerX) / centerX) * -10;
-
-      card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
-    });
-
-    card.addEventListener("mouseleave", () => {
-      card.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
-    });
+      
+      const result = await response.json();
+      
+      // Handle different API response formats
+      if (apiEndpoints[currentApiIndex].includes('quotable.io')) {
+        quote = {
+          en: result.content,
+          author: result.author
+        };
+      } else if (apiEndpoints[currentApiIndex].includes('zenquotes.io')) {
+        quote = {
+          en: result[0].q,
+          author: result[0].a
+        };
+      } else {
+        // Programming quotes API format
+        quote = {
+          en: result.en || result.quote,
+          author: result.author
+        };
+      }
+      
+      if (quote && quote.en && quote.author) {
+        success = true;
+        console.log("Successfully fetched quote from API");
+      } else {
+        throw new Error("Invalid quote format");
+      }
+      
+    } catch (err) {
+      console.warn(`API ${currentApiIndex + 1} failed:`, err.message);
+      currentApiIndex = (currentApiIndex + 1) % apiEndpoints.length;
+    }
+  }
+  
+  // If all APIs fail, use fallback
+  if (!success) {
+    console.log("All APIs failed, using fallback quote");
+    quote = fallbackQuotes[Math.floor(Math.random() * fallbackQuotes.length)];
+  }
+  
+  // Update UI
+  if (quote) {
+    if (currentQuote) history.push(currentQuote);
+    currentQuote = quote;
+    updateUI(quote);
+    if (history.length > 0) prevBtn.classList.remove("hidden");
+  }
+  
+  // Reset button
+  btn.textContent = "New Quote";
+  btn.disabled = false;
+}
   </script>
 </body>
 </html>
