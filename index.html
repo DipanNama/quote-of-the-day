@@ -8,8 +8,8 @@
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-
-</head><body class="bg-neutral-950 text-white h-screen w-screen flex items-center justify-center relative">
+</head>
+<body class="bg-neutral-950 text-white h-screen w-screen flex items-center justify-center relative">
   <div class="absolute top-0 inset-0 z-[-2] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"></div>
 
   <div class="animated-border w-full max-w-md">
@@ -28,146 +28,118 @@
 
       <main class="text-center">
         <sup><i class="ri-double-quotes-l text-2xl"></i></sup>
-        <p id="quote-text" class="px-4 leading-relaxed fade-in">
+        <p id="data" class="px-4 leading-relaxed fade-in">
           LISP has assisted a number of our most gifted fellow humans in thinking previously impossible thoughts.
         </p>
         <sub><i class="ri-double-quotes-r text-2xl"></i></sub>
       </main>
 
       <footer class="flex justify-end mt-3 font-semibold">
-        <span id="quote-author">— Edsger W. Dijkstra</span>
+        <span id="author">— Edsger W. Dijkstra</span>
       </footer>
 
       <hr class="border-zinc-700 my-4">
       <div class="flex justify-between">
         <button id="prevBtn" class="bg-red-500 px-4 py-1.5 rounded-full font-semibold hidden">Previous</button>
-        <button id="newQuoteBtn" class="bg-blue-500 px-4 py-1.5 rounded-full font-semibold">New Quote</button>
+        <button id="btn" class="bg-blue-500 px-4 py-1.5 rounded-full font-semibold">New Quote</button>
       </div>
     </article>
   </div>
 
   <script>
- // Multiple API endpoints for reliability
+    const data = document.getElementById("data");
+    const author = document.getElementById("author");
+    const btn = document.getElementById("btn");
+    const prevBtn = document.getElementById("prevBtn");
+
     const apiEndpoints = [
       "https://api.quotable.io/random",
-      "https://programming-quotes-api.azurewebsites.net/api/quotes/random",
+      "https://programming-quotes-api.herokuapp.com/quotes/random",
       "https://zenquotes.io/api/random"
     ];
 
-    // Fallback quotes in case all APIs fail
     const fallbackQuotes = [
-      {
-        en: "The best way to predict the future is to invent it.",
-        author: "Alan Kay"
-      },
-      {
-        en: "Code is like humor. When you have to explain it, it's bad.",
-        author: "Cory House"
-      },
-      {
-        en: "Programming isn't about what you know; it's about what you can figure out.",
-        author: "Chris Pine"
-      },
-      {
-        en: "The only way to learn a new programming language is by writing programs in it.",
-        author: "Dennis Ritchie"
-      },
-      {
-        en: "Talk is cheap. Show me the code.",
-        author: "Linus Torvalds"
-      }
+      { text: "LISP has assisted a number of our most gifted fellow humans in thinking previously impossible thoughts.", author: "Edsger W. Dijkstra" },
+      { text: "The best way to predict the future is to implement it.", author: "David Heinemeier Hansson" },
+      { text: "Code is like humor. When you have to explain it, it's bad.", author: "Cory House" },
+      { text: "Programs must be written for people to read, and only incidentally for machines to execute.", author: "Harold Abelson" },
+      { text: "First, solve the problem. Then, write the code.", author: "John Johnson" }
     ];
 
-const data = document.getElementById("data");
-const btn = document.getElementById("btn");
-const prevBtn = document.getElementById("prevBtn");
-const author = document.getElementById("author");
+    let history = [];
+    let currentQuote = null;
+    let currentApiIndex = 0;
 
-let history = [];
-let currentQuote = null;
-let currentApiIndex = 0;
-
-async function fetchQuote() {
-  // Show loading state
-  btn.textContent = "Loading...";
-  btn.disabled = true;
-  
-  let quote = null;
-  let success = false;
-  
-  // Try each API endpoint
-  for (let i = 0; i < apiEndpoints.length && !success; i++) {
-    try {
-      console.log(`Trying API: ${apiEndpoints[currentApiIndex]}`);
-      
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
-      
-      const response = await fetch(apiEndpoints[currentApiIndex], {
-        signal: controller.signal,
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-      
-      clearTimeout(timeoutId);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-      
-      const result = await response.json();
-      
-      // Handle different API response formats
-      if (apiEndpoints[currentApiIndex].includes('quotable.io')) {
-        quote = {
-          en: result.content,
-          author: result.author
-        };
-      } else if (apiEndpoints[currentApiIndex].includes('zenquotes.io')) {
-        quote = {
-          en: result[0].q,
-          author: result[0].a
-        };
-      } else {
-        // Programming quotes API format
-        quote = {
-          en: result.en || result.quote,
-          author: result.author
-        };
-      }
-      
-      if (quote && quote.en && quote.author) {
-        success = true;
-        console.log("Successfully fetched quote from API");
-      } else {
-        throw new Error("Invalid quote format");
-      }
-      
-    } catch (err) {
-      console.warn(`API ${currentApiIndex + 1} failed:`, err.message);
-      currentApiIndex = (currentApiIndex + 1) % apiEndpoints.length;
+    function getRandomFallbackQuote() {
+      return fallbackQuotes[Math.floor(Math.random() * fallbackQuotes.length)];
     }
-  }
-  
-  // If all APIs fail, use fallback
-  if (!success) {
-    console.log("All APIs failed, using fallback quote");
-    quote = fallbackQuotes[Math.floor(Math.random() * fallbackQuotes.length)];
-  }
-  
-  // Update UI
-  if (quote) {
-    if (currentQuote) history.push(currentQuote);
-    currentQuote = quote;
-    updateUI(quote);
-    if (history.length > 0) prevBtn.classList.remove("hidden");
-  }
-  
-  // Reset button
-  btn.textContent = "New Quote";
-  btn.disabled = false;
-}
+
+    async function fetchQuote() {
+      btn.textContent = "Loading...";
+      btn.disabled = true;
+
+      let quote = null;
+      let success = false;
+
+      for (let i = 0; i < apiEndpoints.length && !success; i++) {
+        try {
+          const url = apiEndpoints[currentApiIndex];
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+          const response = await fetch(url, { signal: controller.signal, headers: { 'Accept': 'application/json' } });
+          clearTimeout(timeoutId);
+
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const result = await response.json();
+
+          if (url.includes('quotable.io')) {
+            quote = { text: result.content, author: result.author };
+          } else if (url.includes('zenquotes.io')) {
+            quote = { text: result[0].q, author: result[0].a };
+          } else {
+            quote = { text: result.en || result.quote || result.content, author: result.author };
+          }
+
+          if (quote && quote.text && quote.author) success = true;
+        } catch (err) {
+          console.warn(`API ${currentApiIndex + 1} failed:`, err.message);
+          currentApiIndex = (currentApiIndex + 1) % apiEndpoints.length;
+        }
+      }
+
+      if (!success) quote = getRandomFallbackQuote();
+
+      if (currentQuote) history.push(currentQuote);
+      currentQuote = quote;
+      updateUI(quote);
+
+      btn.textContent = "New Quote";
+      btn.disabled = false;
+      if (history.length > 0) prevBtn.classList.remove("hidden");
+    }
+
+    function updateUI(quote) {
+      data.textContent = quote.text;
+      author.textContent = `— ${quote.author}`;
+      data.classList.remove("fade-in");
+      void data.offsetWidth;
+      data.classList.add("fade-in");
+    }
+
+    btn.addEventListener("click", fetchQuote);
+
+    prevBtn.addEventListener("click", () => {
+      if (history.length > 0) {
+        currentQuote = history.pop();
+        updateUI(currentQuote);
+        if (history.length === 0) prevBtn.classList.add("hidden");
+      }
+    });
+
+    // Initialize with default quote
+    currentQuote = fallbackQuotes[0];
+    updateUI(currentQuote);
   </script>
 </body>
 </html>
