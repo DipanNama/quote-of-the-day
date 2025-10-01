@@ -1,23 +1,69 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-.wrapper::before {
-    background: conic-gradient(rgba(244, 114, 182, 0.4) 0deg, rgba(192, 132, 252, 0.4) 0deg, transparent 80deg);
-}
-
-.card::before {
-    animation: border-spin 5s linear infinite;
-}
-
-@keyframes border-spin {
-    0% {
-        transform: rotate(0deg);
+    @property --angle {
+      syntax: "<angle>";
+      initial-value: 0deg;
+      inherits: false;
     }
 
-    100% {
-        transform: rotate(-360deg);
+    body {
+      font-family: 'Poppins', sans-serif;
     }
+
+    .animated-border {
+      position: relative;
+      overflow: visible;
+      perspective: 1200px; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .star-border {
+      pointer-events: none;
+      position: absolute;
+      top: -7px;
+      left: -7px;
+      right: -7px;
+      bottom: -7px;
+      z-index: 0;
+      border-radius: 28px;
+    }
+
+.glow {
+  width: 100%;
+  height: 100%;
+  border-radius: 28px;
+  filter: blur(8px);
+  background: conic-gradient(from var(--angle),
+    #0072ff 0deg,
+    #a5cdff 360deg);
+  animation: spin 2.5s linear infinite;
+  will-change: background;
 }
+
+
+    @keyframes spin {
+      to {
+        --angle: 360deg;
+      }
+    }
+
+    /* Fade-in for quote */
+    .fade-in {
+      animation: fadeIn 0.6s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+
+    /* Card with interactive 3D effect */
+    .card {
+      transform-style: preserve-3d;
+      transition: transform 0.15s ease, box-shadow 0.3s ease;
+      position: relative;
+      z-index: 10;
+    }
+
+    .card:hover {
+      box-shadow: 0 25px 50px rgba(180, 132, 252, 0.4);
+    }
