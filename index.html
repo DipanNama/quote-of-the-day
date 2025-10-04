@@ -1,243 +1,288 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quote of the Day</title>
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quote of the Day</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
 
-  <!-- Fonts & Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-  <style>
-    /* ===================
+    <!-- Fonts & Icons -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ===================
        🌙 Base Styles
     =================== */
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #0a0a0a;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-      padding: 1rem;
-    }
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #0a0a0a;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        padding: 1rem;
+      }
 
-    * {
-      box-sizing: border-box;
-    }
+      * {
+        box-sizing: border-box;
+      }
 
-    /* ===================
+      /* ===================
        🎨 Card Styling
     =================== */
-    .card {
-      position: relative;
-      border-radius: 1rem;
-      overflow: hidden;
-      z-index: 1;
-    }
+      .card {
+        position: relative;
+        border-radius: 1rem;
+        overflow: hidden;
+        z-index: 1;
+      }
 
-    .card::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: conic-gradient(
-        from 0deg,
-        #7c77c6,
-        #ff5e62,
-        #ffcd3c,
-        #7c77c6
-      );
-      animation: spin 10s linear infinite;
-      z-index: -1;
-    }
+      .card::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: conic-gradient(
+          from 0deg,
+          #7c77c6,
+          #ff5e62,
+          #ffcd3c,
+          #7c77c6
+        );
+        animation: spin 10s linear infinite;
+        z-index: -1;
+      }
 
-    /* Add glass effect for card background */
-    .card-content {
-      background: rgba(39, 39, 42, 0.85);
-      backdrop-filter: blur(8px);
-      border-radius: 1rem;
-      padding: 1.5rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-      position: relative;
-      z-index: 10;
-    }
+      /* Add glass effect for card background */
+      .card-content {
+        background: rgba(39, 39, 42, 0.85);
+        backdrop-filter: blur(8px);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        position: relative;
+        z-index: 10;
+      }
 
-    /* ===================
+      /* ===================
        ✨ Animations
     =================== */
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    .fade-in {
-      animation: fadeIn 0.6s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ===================
-       🧭 Button Styles
-    =================== */
-    button {
-      transition: all 0.2s ease;
-    }
-
-    button:focus {
-      outline: 2px solid #fff;
-      outline-offset: 3px;
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="relative w-full max-w-md">
-    <div class="card">
-      <div class="card-content flex flex-col space-y-6">
-
-        <!-- Top Dots -->
-        <div class="flex space-x-2">
-          <div class="h-3 w-3 rounded-full bg-red-500"></div>
-          <div class="h-3 w-3 rounded-full bg-yellow-500"></div>
-          <div class="h-3 w-3 rounded-full bg-green-500"></div>
-        </div>
-
-        <!-- Quote Content -->
-        <main class="text-center">
-          <sup><i class="ri-double-quotes-l text-2xl text-pink-400"></i></sup>
-          <p id="data" class="px-4 leading-relaxed fade-in text-lg font-medium">
-            LISP has assisted a number of our most gifted fellow humans in thinking previously impossible thoughts.
-          </p>
-          <sub><i class="ri-double-quotes-r text-2xl text-pink-400"></i></sub>
-        </main>
-
-        <!-- Author -->
-        <div id="author" class="flex justify-end font-semibold italic text-gray-300">
-          — Edsger W. Dijkstra
-        </div>
-
-        <hr class="border-zinc-700">
-
-        <!-- Buttons -->
-        <div class="flex justify-between pt-2">
-          <button id="prevBtn" aria-label="Previous Quote"
-            class="bg-red-500 hover:bg-red-600 px-5 py-2 rounded-full font-semibold hidden shadow-md">
-            Previous
-          </button>
-          <button id="btn" aria-label="Get New Quote"
-            class="bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded-full font-semibold shadow-md">
-            New Quote
-          </button>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const data = document.getElementById("data");
-    const btn = document.getElementById("btn");
-    const prevBtn = document.getElementById("prevBtn");
-    const author = document.getElementById("author");
-
-    let history = [];
-    let currentQuote = {
-      text: "LISP has assisted a number of our most gifted fellow humans in thinking previously impossible thoughts.",
-      author: "Edsger W. Dijkstra"
-    };
-
-    const fallbackQuotes = [
-      { text: "The best way to predict the future is to invent it.", author: "Alan Kay" },
-      { text: "Code is like humor. When you have to explain it, it's bad.", author: "Cory House" },
-      { text: "Programming isn't about what you know; it's about what you can figure out.", author: "Chris Pine" },
-      { text: "The only way to learn a new programming language is by writing programs in it.", author: "Dennis Ritchie" },
-      { text: "Talk is cheap. Show me the code.", author: "Linus Torvalds" }
-    ];
-
-    const apiEndpoints = [
-      "https://api.quotable.io/random",
-      "https://programming-quotes-api.herokuapp.com/quotes/random",
-      "https://zenquotes.io/api/random"
-    ];
-
-    function getRandomFallbackQuote() {
-      return fallbackQuotes[Math.floor(Math.random() * fallbackQuotes.length)];
-    }
-
-    function updateUI(quote) {
-      data.textContent = quote.text;
-      author.textContent = `— ${quote.author}`;
-      data.classList.remove("fade-in");
-      void data.offsetWidth; // restart animation
-      data.classList.add("fade-in");
-    }
-
-    async function fetchQuote() {
-      btn.textContent = "Loading...";
-      btn.disabled = true;
-
-      let quote = null;
-      for (let i = 0; i < apiEndpoints.length; i++) {
-        try {
-          const response = await fetch(apiEndpoints[i]);
-          if (!response.ok) throw new Error("API failed");
-          const result = await response.json();
-
-          if (apiEndpoints[i].includes("quotable.io")) {
-            quote = { text: result.content, author: result.author };
-          } else if (apiEndpoints[i].includes("zenquotes.io")) {
-            quote = { text: result[0].q, author: result[0].a };
-          } else {
-            quote = { text: result.en || result.text || result.quote, author: result.author };
-          }
-
-          if (quote.text && quote.author) break;
-        } catch (err) {
-          console.warn("API failed:", err.message);
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
         }
       }
 
-      if (!quote) quote = getRandomFallbackQuote();
-
-      if (currentQuote) history.push(currentQuote);
-      currentQuote = quote;
-      updateUI(quote);
-
-      if (history.length > 0) prevBtn.classList.remove("hidden");
-
-      btn.textContent = "New Quote";
-      btn.disabled = false;
-    }
-
-    btn.addEventListener("click", fetchQuote);
-
-    prevBtn.addEventListener("click", () => {
-      if (history.length > 0) {
-        currentQuote = history.pop();
-        updateUI(currentQuote);
-        if (history.length === 0) prevBtn.classList.add("hidden");
+      .fade-in {
+        animation: fadeIn 0.6s ease-in-out;
       }
-    });
 
-    // Initialize
-    updateUI(currentQuote);
-  </script>
-</body>
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ===================
+       🧭 Button Styles
+    =================== */
+      button {
+        transition: all 0.2s ease;
+      }
+
+      button:focus {
+        outline: 2px solid #fff;
+        outline-offset: 3px;
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="relative w-full max-w-md">
+      <div class="card">
+        <div class="card-content flex flex-col space-y-6">
+          <!-- Top Dots -->
+          <div class="flex space-x-2">
+            <div class="h-3 w-3 rounded-full bg-red-500"></div>
+            <div class="h-3 w-3 rounded-full bg-yellow-500"></div>
+            <div class="h-3 w-3 rounded-full bg-green-500"></div>
+          </div>
+
+          <!-- Quote Content -->
+          <main class="text-center">
+            <sup><i class="ri-double-quotes-l text-2xl text-pink-400"></i></sup>
+            <p
+              id="data"
+              class="px-4 leading-relaxed fade-in text-lg font-medium"
+            >
+              LISP has assisted a number of our most gifted fellow humans in
+              thinking previously impossible thoughts.
+            </p>
+            <sub><i class="ri-double-quotes-r text-2xl text-pink-400"></i></sub>
+          </main>
+
+          <!-- Author -->
+          <div
+            id="author"
+            class="flex justify-end font-semibold italic text-gray-300"
+          >
+            — Edsger W. Dijkstra
+          </div>
+
+          <hr class="border-zinc-700" />
+
+          <!-- Buttons -->
+          <div class="flex justify-between pt-2">
+            <button
+              id="prevBtn"
+              aria-label="Previous Quote"
+              class="bg-red-500 hover:bg-red-600 px-5 py-2 rounded-full font-semibold hidden shadow-md"
+            >
+              Previous
+            </button>
+            <button
+              id="btn"
+              aria-label="Get New Quote"
+              class="bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded-full font-semibold shadow-md"
+            >
+              New Quote
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const data = document.getElementById("data");
+      const btn = document.getElementById("btn");
+      const prevBtn = document.getElementById("prevBtn");
+      const author = document.getElementById("author");
+
+      let history = [];
+      let currentQuote = {
+        text: "LISP has assisted a number of our most gifted fellow humans in thinking previously impossible thoughts.",
+        author: "Edsger W. Dijkstra",
+      };
+
+      const fallbackQuotes = [
+        {
+          text: "The best way to predict the future is to invent it.",
+          author: "Alan Kay",
+        },
+        {
+          text: "Code is like humor. When you have to explain it, it's bad.",
+          author: "Cory House",
+        },
+        {
+          text: "Programming isn't about what you know; it's about what you can figure out.",
+          author: "Chris Pine",
+        },
+        {
+          text: "The only way to learn a new programming language is by writing programs in it.",
+          author: "Dennis Ritchie",
+        },
+        { text: "Talk is cheap. Show me the code.", author: "Linus Torvalds" },
+      ];
+
+      const apiEndpoints = [
+        "https://api.quotable.io/random",
+        "https://programming-quotes-api.herokuapp.com/quotes/random",
+        "https://zenquotes.io/api/random",
+      ];
+
+      function getRandomFallbackQuote() {
+        return fallbackQuotes[
+          Math.floor(Math.random() * fallbackQuotes.length)
+        ];
+      }
+
+      function updateUI(quote) {
+        data.textContent = quote.text;
+        author.textContent = `— ${quote.author}`;
+        data.classList.remove("fade-in");
+        void data.offsetWidth; // restart animation
+        data.classList.add("fade-in");
+      }
+
+      async function fetchQuote() {
+        btn.textContent = "Loading...";
+        btn.disabled = true;
+
+        let quote = null;
+        for (let i = 0; i < apiEndpoints.length; i++) {
+          try {
+            const response = await fetch(apiEndpoints[i]);
+            if (!response.ok) throw new Error("API failed");
+            const result = await response.json();
+
+            if (apiEndpoints[i].includes("quotable.io")) {
+              quote = { text: result.content, author: result.author };
+            } else if (apiEndpoints[i].includes("zenquotes.io")) {
+              quote = { text: result[0].q, author: result[0].a };
+            } else {
+              quote = {
+                text: result.en || result.text || result.quote,
+                author: result.author,
+              };
+            }
+
+            if (quote.text && quote.author) break;
+          } catch (err) {
+            console.warn("API failed:", err.message);
+          }
+        }
+
+        if (!quote) quote = getRandomFallbackQuote();
+
+        if (currentQuote) history.push(currentQuote);
+        currentQuote = quote;
+        updateUI(quote);
+
+        if (history.length > 0) prevBtn.classList.remove("hidden");
+
+        btn.textContent = "New Quote";
+        btn.disabled = false;
+      }
+
+      btn.addEventListener("click", fetchQuote);
+
+      prevBtn.addEventListener("click", () => {
+        if (history.length > 0) {
+          currentQuote = history.pop();
+          updateUI(currentQuote);
+          if (history.length === 0) prevBtn.classList.add("hidden");
+        }
+      });
+
+      // Initialize
+      updateUI(currentQuote);
+    </script>
+  </body>
 </html>
