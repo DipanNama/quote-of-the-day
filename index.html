@@ -12,99 +12,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
 
-  <style>
-    /* ===================
-       🌙 Base Styles
-    =================== */
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #0a0a0a;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-      padding: 1rem;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    /* ===================
-       🎨 Card Styling
-    =================== */
-    .card {
-      position: relative;
-      border-radius: 1rem;
-      overflow: hidden;
-      z-index: 1;
-    }
-
-    .card::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: conic-gradient(
-        from 0deg,
-        #7c77c6,
-        #ff5e62,
-        #ffcd3c,
-        #7c77c6
-      );
-      animation: spin 10s linear infinite;
-      z-index: -1;
-    }
-
-    /* Add glass effect for card background */
-    .card-content {
-      background: rgba(39, 39, 42, 0.85);
-      backdrop-filter: blur(8px);
-      border-radius: 1rem;
-      padding: 1.5rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-      position: relative;
-      z-index: 10;
-    }
-
-    /* ===================
-       ✨ Animations
-    =================== */
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    .fade-in {
-      animation: fadeIn 0.6s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ===================
-       🧭 Button Styles
-    =================== */
-    button {
-      transition: all 0.2s ease;
-    }
-
-    button:focus {
-      outline: 2px solid #fff;
-      outline-offset: 3px;
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-  </style>
+  <!-- Main Styles -->
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -112,11 +21,16 @@
     <div class="card">
       <div class="card-content flex flex-col space-y-6">
 
-        <!-- Top Dots -->
-        <div class="flex space-x-2">
-          <div class="h-3 w-3 rounded-full bg-red-500"></div>
-          <div class="h-3 w-3 rounded-full bg-yellow-500"></div>
-          <div class="h-3 w-3 rounded-full bg-green-500"></div>
+        <!-- Top Dots + Theme Toggle -->
+        <div class="flex justify-between items-center">
+          <div class="flex space-x-2">
+            <div class="h-3 w-3 rounded-full bg-red-500"></div>
+            <div class="h-3 w-3 rounded-full bg-yellow-500"></div>
+            <div class="h-3 w-3 rounded-full bg-green-500"></div>
+          </div>
+          <button id="themeToggle" aria-label="Toggle Theme">
+            <i class="ri-moon-line"></i>
+          </button>
         </div>
 
         <!-- Quote Content -->
@@ -133,7 +47,7 @@
           — Edsger W. Dijkstra
         </div>
 
-        <hr class="border-zinc-700">
+        <hr>
 
         <!-- Buttons -->
         <div class="flex justify-between pt-2">
@@ -146,6 +60,7 @@
             New Quote
           </button>
         </div>
+        
 
       </div>
     </div>
@@ -156,6 +71,7 @@
     const btn = document.getElementById("btn");
     const prevBtn = document.getElementById("prevBtn");
     const author = document.getElementById("author");
+    const themeToggle = document.getElementById("themeToggle");
 
     let history = [];
     let currentQuote = {
@@ -236,7 +152,28 @@
       }
     });
 
-    // Initialize
+    // ===================
+    // 🌗 THEME TOGGLE
+    // ===================
+    function applyTheme(theme) {
+      document.body.classList.toggle("light-theme", theme === "light");
+      themeToggle.innerHTML = theme === "light" 
+        ? '<i class="ri-sun-line"></i>' 
+        : '<i class="ri-moon-line"></i>';
+    }
+
+    const savedTheme = localStorage.getItem("theme");
+    const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+    const initialTheme = savedTheme || (prefersLight ? "light" : "dark");
+    applyTheme(initialTheme);
+
+    themeToggle.addEventListener("click", () => {
+      const newTheme = document.body.classList.contains("light-theme") ? "dark" : "light";
+      applyTheme(newTheme);
+      localStorage.setItem("theme", newTheme);
+    });
+
+    // Initialize UI
     updateUI(currentQuote);
   </script>
 </body>
