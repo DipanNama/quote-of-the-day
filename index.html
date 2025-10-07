@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -33,19 +33,10 @@
           </button>
         </div>
 
-        <!-- Quote Content -->
-        <main class="text-center">
-          <sup><i class="ri-double-quotes-l text-2xl text-pink-400"></i></sup>
-          <p id="data" class="px-4 leading-relaxed fade-in text-lg font-medium">
-            LISP has assisted a number of our most gifted fellow humans in thinking previously impossible thoughts.
-          </p>
-          <sub><i class="ri-double-quotes-r text-2xl text-pink-400"></i></sub>
-        </main>
-
-        <!-- Author -->
-        <div id="author" class="flex justify-end font-semibold italic text-gray-300">
-          — Edsger W. Dijkstra
-        </div>
+      button:focus {
+        outline: 2px solid #fff;
+        outline-offset: 3px;
+      }
 
         <hr>
 
@@ -124,33 +115,97 @@
             quote = { text: result.en || result.text || result.quote, author: result.author };
           }
 
-          if (quote.text && quote.author) break;
-        } catch (err) {
-          console.warn("API failed:", err.message);
+    <script>
+      const data = document.getElementById("data");
+      const btn = document.getElementById("btn");
+      const prevBtn = document.getElementById("prevBtn");
+      const author = document.getElementById("author");
+
+      let history = [];
+      let currentQuote = {
+        text: "LISP has assisted a number of our most gifted fellow humans in thinking previously impossible thoughts.",
+        author: "Edsger W. Dijkstra",
+      };
+
+      const fallbackQuotes = [
+        {
+          text: "The best way to predict the future is to invent it.",
+          author: "Alan Kay",
+        },
+        {
+          text: "Code is like humor. When you have to explain it, it's bad.",
+          author: "Cory House",
+        },
+        {
+          text: "Programming isn't about what you know; it's about what you can figure out.",
+          author: "Chris Pine",
+        },
+        {
+          text: "The only way to learn a new programming language is by writing programs in it.",
+          author: "Dennis Ritchie",
+        },
+        { text: "Talk is cheap. Show me the code.", author: "Linus Torvalds" },
+      ];
+
+      const apiEndpoints = [
+        "https://api.quotable.io/random",
+        "https://programming-quotes-api.herokuapp.com/quotes/random",
+        "https://zenquotes.io/api/random",
+      ];
+
+      function getRandomFallbackQuote() {
+        return fallbackQuotes[
+          Math.floor(Math.random() * fallbackQuotes.length)
+        ];
+      }
+
+      function updateUI(quote) {
+        data.textContent = quote.text;
+        author.textContent = `— ${quote.author}`;
+        data.classList.remove("fade-in");
+        void data.offsetWidth; // restart animation
+        data.classList.add("fade-in");
+      }
+
+      async function fetchQuote() {
+        btn.textContent = "Loading...";
+        btn.disabled = true;
+
+        let quote = null;
+        for (let i = 0; i < apiEndpoints.length; i++) {
+          try {
+            const response = await fetch(apiEndpoints[i]);
+            if (!response.ok) throw new Error("API failed");
+            const result = await response.json();
+
+            if (apiEndpoints[i].includes("quotable.io")) {
+              quote = { text: result.content, author: result.author };
+            } else if (apiEndpoints[i].includes("zenquotes.io")) {
+              quote = { text: result[0].q, author: result[0].a };
+            } else {
+              quote = {
+                text: result.en || result.text || result.quote,
+                author: result.author,
+              };
+            }
+
+            if (quote.text && quote.author) break;
+          } catch (err) {
+            console.warn("API failed:", err.message);
+          }
         }
+
+        if (!quote) quote = getRandomFallbackQuote();
+
+        if (currentQuote) history.push(currentQuote);
+        currentQuote = quote;
+        updateUI(quote);
+
+        if (history.length > 0) prevBtn.classList.remove("hidden");
+
+        btn.textContent = "New Quote";
+        btn.disabled = false;
       }
-
-      if (!quote) quote = getRandomFallbackQuote();
-
-      if (currentQuote) history.push(currentQuote);
-      currentQuote = quote;
-      updateUI(quote);
-
-      if (history.length > 0) prevBtn.classList.remove("hidden");
-
-      btn.textContent = "New Quote";
-      btn.disabled = false;
-    }
-
-    btn.addEventListener("click", fetchQuote);
-
-    prevBtn.addEventListener("click", () => {
-      if (history.length > 0) {
-        currentQuote = history.pop();
-        updateUI(currentQuote);
-        if (history.length === 0) prevBtn.classList.add("hidden");
-      }
-    });
 
     // ===================
     // 🌗 THEME TOGGLE
