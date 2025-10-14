@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quote of the Day</title>
 
-    <!-- TailwindCSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
     <!-- Fonts & Icons -->
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
@@ -18,92 +15,74 @@
       rel="stylesheet"
     />
 
+    <!-- CSS File -->
     <link rel="stylesheet" href="style.css" />
   </head>
 
   <body>
-    <div class="wrapper flex justify-center items-center min-h-screen p-4">
-      <div class="card w-full max-w-sm sm:max-w-md">
-        <div class="card-content flex flex-col space-y-6">
+    <div class="wrapper">
+      <div class="card">
+        <div class="card-content">
 
           <!-- Top Bar -->
-          <div class="flex justify-between items-center">
-            <div class="flex space-x-2">
-              <div class="h-3 w-3 rounded-full bg-red-500"></div>
-              <div class="h-3 w-3 rounded-full bg-yellow-500"></div>
-              <div class="h-3 w-3 rounded-full bg-green-500"></div>
+          <div class="top-bar">
+            <div class="dots">
+              <div class="dot red"></div>
+              <div class="dot yellow"></div>
+              <div class="dot green"></div>
             </div>
-            <button id="themeToggle" aria-label="Toggle Theme" class="text-xl">
+            <button id="themeToggle" aria-label="Toggle Theme" class="theme-btn">
               <i class="ri-moon-line"></i>
             </button>
           </div>
 
           <!-- Quote Section -->
-          <!-- Quote Section -->
-<main class="text-center px-2 relative">
-  <!-- Skeleton Loader -->
-  <div id="skeleton" class="animate-pulse hidden">
-    <div class="h-6 bg-gray-300 rounded w-3/4 mx-auto mb-4"></div>
-    <div class="h-4 bg-gray-300 rounded w-1/2 mx-auto"></div>
-  </div>
+          <main class="quote-section">
+            <!-- Skeleton Loader -->
+            <div id="skeleton" class="skeleton hidden">
+              <div class="skeleton-bar large"></div>
+              <div class="skeleton-bar small"></div>
+            </div>
 
-  <!-- Actual Quote -->
-  <sup><i class="ri-double-quotes-l text-2xl text-pink-400"></i></sup>
-  <blockquote
-    id="data"
-    class="px-2 text-base sm:text-lg leading-relaxed font-medium fade-in"
-  >
-    LISP has assisted a number of our most gifted fellow humans in
-    thinking previously impossible thoughts.
-  </blockquote>
-  <sub><i class="ri-double-quotes-r text-2xl text-pink-400"></i></sub>
-</main>
+            <!-- Actual Quote -->
+            <div class="quote-content">
+              <sup><i class="ri-double-quotes-l quote-icon"></i></sup>
+              <blockquote id="data" class="quote-text fade-in">
+                LISP has assisted a number of our most gifted fellow humans in
+                thinking previously impossible thoughts.
+              </blockquote>
+              <sub><i class="ri-double-quotes-r quote-icon"></i></sub>
+            </div>
+          </main>
+
           <!-- Author + Copy Button -->
-          <div class="flex justify-end items-center space-x-2 relative">
-            <cite
-              id="author"
-              class="text-sm sm:text-base font-semibold italic text-gray-300"
-            >
+          <div class="author-section">
+            <cite id="author" class="author-text">
               — Edsger W. Dijkstra
             </cite>
-            <button
-              id="copyBtn"
-              class="text-gray-300 hover:text-white transition-all"
-              aria-label="Copy Quote"
-            >
+            <button id="copyBtn" class="copy-btn" aria-label="Copy Quote">
               <i class="ri-file-copy-line"></i>
             </button>
-            <span
-              id="copiedTooltip"
-              class="absolute top-0 right-10 bg-black text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity"
-            >
+            <span id="copiedTooltip" class="tooltip">
               Copied!
             </span>
           </div>
 
-          <hr />
+          <hr class="divider" />
 
           <!-- Buttons -->
-          <div class="flex flex-col sm:flex-row gap-3 pt-2">
-            <button
-              id="prevBtn"
-              aria-label="Previous Quote"
-              class="hidden bg-red-500 hover:bg-red-600 w-full sm:w-auto px-5 py-2.5 rounded-full font-semibold shadow-md text-white transition-all"
-            >
-              Previous
+          <div class="button-group">
+            <button id="prevBtn" aria-label="Previous Quote" class="btn btn-secondary hidden">
+              <i class="ri-arrow-left-line"></i>Previous
             </button>
-            <button
-              id="btn"
-              aria-label="Get New Quote"
-              class="bg-blue-500 hover:bg-blue-600 w-full sm:w-auto px-5 py-2.5 rounded-full font-semibold shadow-md text-white transition-all"
-            >
-              New Quote
+            <button id="btn" aria-label="Get New Quote" class="btn btn-primary">
+              New Quote<i class="ri-refresh-line"></i>
             </button>
           </div>
 
           <!-- Loading Spinner -->
-          <div id="loading" class="hidden flex justify-center pt-2">
-            <i class="ri-loader-4-line animate-spin text-2xl text-pink-400"></i>
+          <div id="loading" class="loading hidden">
+            <i class="ri-loader-4-line animate-spin"></i>
           </div>
         </div>
       </div>
